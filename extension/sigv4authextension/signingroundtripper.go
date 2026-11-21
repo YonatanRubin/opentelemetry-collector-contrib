@@ -77,6 +77,9 @@ func (si *signingRoundTripper) signRequest(req *http.Request) (*http.Request, er
 		return nil, fmt.Errorf("error retrieving credentials: %w", err)
 	}
 
+	// Add payload hash to header
+	req2.Header.Set("x-amz-content-sha256", payloadHash)
+
 	err = si.signer.SignHTTP(req.Context(), creds, req2, payloadHash, service, region, time.Now())
 	if err != nil {
 		return nil, fmt.Errorf("error signing the request: %w", err)
